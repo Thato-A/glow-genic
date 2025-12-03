@@ -17,8 +17,8 @@ export function AuthProvider({ children }) {
     setUser(fakeUser);
   };
 
-  const register = (email, password) => {
-    const newUser = { email };
+  const register = (name, email, password) => {
+    const newUser = { name, email };
     localStorage.setItem("glowgenic-user", JSON.stringify(newUser));
     setUser(newUser);
   };

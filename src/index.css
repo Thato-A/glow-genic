@@ -1,1 +1,51 @@
 @import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Floating bubble animation */
+.bubble {
+  position: absolute;
+  bottom: -80px;
+  background: rgba(126, 212, 188, 0.35);
+  border-radius: 50%;
+  filter: blur(2px);
+  animation: bubbleFloat linear infinite;
+}
+
+@keyframes bubbleFloat {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-150px) scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-280px) scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes bubbleFloat {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-80px) scale(1.2);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-160px) scale(1);
+    opacity: 0;
+  }
+}
+
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  animation: bubbleFloat 6s ease-in-out infinite;
+}

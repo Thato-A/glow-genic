@@ -1,9 +1,11 @@
-// src/components/Hero.jsx
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useState } from "react";
 import bgVideo from "../assets/water-video.mp4";
+import Consultation from "./Consultation";
 
 export default function Hero() {
+  const [showConsult, setShowConsult] = useState(false);
+
   return (
     <section className="relative w-full h-screen flex items-center justify-center overflow-hidden">
       {/* BACKGROUND VIDEO */}
@@ -49,10 +51,12 @@ export default function Hero() {
           transition={{ delay: 1.2, duration: 1 }}
           whileHover={{ scale: 1.05 }}
           className="mt-10 px-10 py-3 rounded-full bg-teal-600 text-white text-lg shadow-md hover:bg-teal-700 transition animate-pulse"
+          onClick={() => setShowConsult(true)}
         >
-          Discover Your Routine
+          Schedule Consultation
         </motion.button>
       </div>
+      {showConsult && <Consultation onClose={() => setShowConsult(false)} />}
     </section>
   );
 }

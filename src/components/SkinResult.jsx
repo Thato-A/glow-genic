@@ -1,4 +1,3 @@
-// src/components/SkinResult.jsx
 import { routines } from "../data/routine";
 import ProductCard from "./ProductCard";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,8 +22,8 @@ export default function SkinResult({ concern, onRetake }) {
 
         {/* Products */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-16">
-          {routine.products.map((p, i) => (
-            <ProductCard key={i} product={p} index={i} />
+          {routine.products.map((product, i) => (
+            <ProductCard key={product.id} product={product} index={i} />
           ))}
         </div>
 
