@@ -9,14 +9,14 @@ import Login from "./Login";
 import Contact from "./Contact";
 import Footer from "./Footer";
 import ShoppingCart from "./ShoppingCart";
+import CheckoutPage from "./CheckoutPage.jsx";
 
 export default function App() {
   const { user } = useAuth();
+
   const [showLogin, setShowLogin] = useState(false);
-
   const [showCart, setShowCart] = useState(false);
-
-  const [showCheckout, setShowCheckout] = useState(false);
+  const [showCheckoutPage, setShowCheckoutPage] = useState(false);
 
   return (
     <>
@@ -27,16 +27,24 @@ export default function App() {
       <Testimonials />
       <Contact />
       <Footer />
+
+      {/* LOGIN MODAL */}
       {showLogin && <Login onClose={() => setShowLogin(false)} />}
 
+      {/* SHOPPING CART */}
       {showCart && (
         <ShoppingCart
           onClose={() => setShowCart(false)}
           onCheckout={() => {
             setShowCart(false);
-            setShowCheckout(true);
+            setShowCheckoutPage(true);
           }}
         />
+      )}
+
+      {/* FINAL CHECKOUT PAGE */}
+      {showCheckoutPage && (
+        <CheckoutPage onClose={() => setShowCheckoutPage(false)} />
       )}
     </>
   );

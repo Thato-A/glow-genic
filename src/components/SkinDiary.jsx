@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
+import useScrollReveal from "../hooks/useScrollReveal";
 
 const moodOptions = [
   { value: "amazing", label: "Amazing", emoji: "✨" },
@@ -14,6 +15,8 @@ const moodOptions = [
 const toDateKey = (date) => date.toISOString().split("T")[0];
 
 export default function SkinDiary({ onLogin }) {
+  const { ref, controls } = useScrollReveal();
+
   const { user } = useAuth();
   const [entries, setEntries] = useState([]);
   const [note, setNote] = useState("");
@@ -103,35 +106,42 @@ export default function SkinDiary({ onLogin }) {
 
   if (!user) {
     return (
-      <section className="py-20 px-6 max-w-3xl mx-auto text-center">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-4xl font-semibold text-teal-700 mb-4"
-        >
-          Skin Diary
-        </motion.h2>
+      <motion.section
+        ref={ref}
+        initial={{ opacity: 0, y: 60 }}
+        animate={controls}
+        className="py-20"
+      >
+        <section className="py-20 px-6 max-w-3xl mx-auto text-center">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-4xl font-semibold text-teal-700 mb-4"
+          >
+            Skin Diary
+          </motion.h2>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-gray-600 text-lg mb-8"
-        >
-          Login to track how your skin feels day-by-day and see your progress
-          over time.
-        </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-gray-600 text-lg mb-8"
+          >
+            Login to track how your skin feels day-by-day and see your progress
+            over time.
+          </motion.p>
 
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={onLogin}
-          className="px-10 py-3 rounded-full bg-teal-600 text-white text-lg shadow-md hover:bg-teal-700 transition"
-        >
-          Login to add to your diary
-        </motion.button>
-      </section>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={onLogin}
+            className="px-10 py-3 rounded-full bg-teal-600 text-white text-lg shadow-md hover:bg-teal-700 transition"
+          >
+            Login to add to your diary
+          </motion.button>
+        </section>
+      </motion.section>
     );
   }
 

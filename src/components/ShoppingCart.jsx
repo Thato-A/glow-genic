@@ -1,107 +1,171 @@
+import { FiTrash2 } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { useCart } from "../context/CartContext";
-import { useState } from "react";
 
 export default function ShoppingCart({ onClose, onCheckout }) {
   const { cart, updateQuantity, removeItem } = useCart();
-  const [swipeX, setSwipeX] = useState({});
 
   const subtotal = cart.reduce(
-    (total, item) => total + item.price * item.quantity,
+    (sum, item) => sum + item.price * item.quantity,
     0
   );
 
+  const tax = subtotal * 0.08;
+  const total = subtotal + tax;
+
   return (
     <motion.div
-      onClick={onClose}
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[99999] p-4"
+      className="fixed inset-0 z-[9999] flex"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
     >
+      {/* BACKDROP */}
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      {/* SLIDE-IN CART PANEL */}
       <motion.div
-        onClick={(e) => e.stopPropagation()}
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="bg-white rounded-2xl p-6 w-full max-w-lg shadow-2xl"
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        transition={{ type: "spring", stiffness: 120, damping: 18 }}
+        className="relative ml-auto w-full max-w-lg bg-white h-full overflow-y-auto shadow-2xl px-6 py-10 rounded-l-2xl"
       >
-        <h2 className="text-2xl font-bold mb-6 text-gray-900">Your Cart</h2>
+        {/* CLOSE BUTTON */}
+        <button
+          onClick={onClose}
+          className="absolute right-5 top-5 text-gray-500 text-2xl hover:text-gray-700"
+        >
+          ×
+        </button>
 
-        {cart.length === 0 && (
-          <p className="text-gray-600">Your cart is empty.</p>
-        )}
+        {/* HEADER */}
+        <p
+          className="text-sm text-gray-600 mb-3 cursor-pointer hover:underline"
+          onClick={onClose}
+        >
+          ← Continue Shopping
+        </p>
 
-        {/* Cart Items */}
-        <div className="space-y-4">
+        <h1 className="text-3xl font-bold text-teal-700 mb-8">Shopping Cart</h1>
+
+        {/* CART ITEMS */}
+        <div className="space-y-5">
           {cart.map((item) => (
-            <motion.div
+            <div
               key={item.id}
-              drag="x"
-              dragConstraints={{ left: -120, right: 0 }}
-              dragElastic={0.15}
-              onDrag={(e, info) => {
-                setSwipeX((prev) => ({ ...prev, [item.id]: info.point.x }));
-              }}
-              onDragEnd={(e, info) => {
-                if (info.point.x < -80) {
-                  removeItem(item.id);
-                }
-                setSwipeX((prev) => ({ ...prev, [item.id]: 0 }));
-              }}
-              className="relative bg-gray-50 rounded-xl p-4 shadow-sm overflow-hidden"
+              className="bg-white rounded-xl shadow-sm p-5 flex items-center justify-between border"
             >
-              {/* Swipe Background Buttons */}
-              <div className="absolute inset-0 flex justify-end items-center pr-4 gap-3 pointer-events-none">
-                <button className="bg-gray-300 text-black px-3 py-1 rounded text-sm pointer-events-auto">
-                  Save for Later
-                </button>
-                <button className="bg-red-500 text-white px-3 py-1 rounded text-sm pointer-events-auto">
-                  Delete
-                </button>
-              </div>
+              {/* PRODUCT LEFT SIDE */}
+              <div className="flex gap-4 items-center">
+                <img
+                  src={item.image || "/placeholder.jpg"}
+                  alt={item.name}
+                  className="w-24 h-20 rounded-lg object-cover"
+                />
 
-              {/* Foreground Card */}
-              <motion.div
-                className="relative flex justify-between items-center"
-                style={{ x: swipeX[item.id] || 0 }}
-              >
                 <div>
-                  <h3 className="font-semibold text-gray-900">{item.name}</h3>
-                  <p className="text-sm text-gray-500">${item.price}</p>
+                  <h2 className="font-semibold text-gray-800">{item.name}</h2>
+                  <p className="text-sm text-gray-500">{item.description}</p>
 
-                  <div className="flex items-center mt-2">
+                  {/* QTY BUTTONS */}
+                  <div className="flex items-center mt-3">
                     <button
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      className="px-2 py-1 bg-gray-200 rounded"
+                      onClick={() =>
+                        updateQuantity(item.id, Math.max(1, item.quantity - 1))
+                      }
+                      className="px-3 py-1 bg-gray-200 rounded-l-lg hover:bg-gray-300"
                     >
                       -
                     </button>
-                    <span className="px-3">{item.quantity}</span>
+
+                    <span className="px-4 py-1 bg-gray-100">
+                      {item.quantity}
+                    </span>
+
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="px-2 py-1 bg-gray-200 rounded"
+                      className="px-3 py-1 bg-gray-200 rounded-r-lg hover:bg-gray-300"
                     >
                       +
                     </button>
                   </div>
                 </div>
-              </motion.div>
-            </motion.div>
+              </div>
+
+              {/* PRICE + DELETE */}
+              <div className="flex flex-col items-end">
+                <p className="text-lg font-semibold text-gray-900">
+                  ${(item.price * item.quantity).toFixed(2)}
+                </p>
+
+                <button
+                  onClick={() => removeItem(item.id)}
+                  className="text-red-500 hover:text-red-600 mt-3"
+                >
+                  <FiTrash2 size={20} />
+                </button>
+              </div>
+            </div>
           ))}
         </div>
 
-        {/* Subtotal */}
-        {cart.length > 0 && (
-          <div className="mt-8 border-t pt-4">
-            <h3 className="text-lg font-bold text-gray-900">
-              Subtotal: ${subtotal.toFixed(2)}
-            </h3>
+        {/* ORDER SUMMARY */}
+        <div className="mt-10 bg-white rounded-xl shadow-md p-6 border">
+          <h2 className="text-xl font-semibold mb-6 text-gray-800">
+            Order Summary
+          </h2>
 
-            <button
-              onClick={onCheckout}
-              className="w-full mt-6 bg-black text-white py-3 rounded-full hover:bg-gray-800 transition"
-            >
-              Checkout
-            </button>
+          <div className="flex justify-between text-gray-700 mb-3">
+            <p>Subtotal</p>
+            <p>${subtotal.toFixed(2)}</p>
           </div>
-        )}
+
+          <div className="flex justify-between text-gray-700 mb-3">
+            <p>Tax</p>
+            <p>${tax.toFixed(2)}</p>
+          </div>
+
+          <div className="flex justify-between text-gray-700 mb-6">
+            <p>Shipping</p>
+            <p>—</p>
+          </div>
+
+          <div className="flex justify-between text-gray-900 text-lg font-bold mb-6">
+            <p>Total</p>
+            <p>${total.toFixed(2)}</p>
+          </div>
+
+          {/* CHECKOUT BUTTON */}
+          <button
+            onClick={onCheckout}
+            className="w-full py-3 rounded-lg text-white font-semibold 
+  bg-gradient-to-r from-teal-600 to-teal-500 hover:from-teal-700 hover:to-teal-600 
+  transition shadow-md"
+          >
+            Proceed to Checkout
+          </button>
+
+          {/* PAYMENT ICONS */}
+          <p className="text-sm text-gray-400 text-center mt-4 mb-2">
+            We Accept
+          </p>
+
+          <div className="flex justify-center gap-3">
+            <img src="/public/visa.png" className="h-6" />
+            <img src="/public/mastercard.png" className="h-6" />
+            <img src="/public/amex.png" className="h-6" />
+            <img src="/public/applepay.png" className="h-6" />
+            <img src="/public/googlepay.png" className="h-6" />
+            <img src="/public/venmo-icon.png" className="h-6" />
+          </div>
+
+          <p className="text-[11px] text-gray-400 text-center mt-3">
+            Secure checkout with SSL encryption
+          </p>
+        </div>
       </motion.div>
     </motion.div>
   );
