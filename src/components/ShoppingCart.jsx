@@ -11,7 +11,10 @@ export default function ShoppingCart({ onClose, onCheckout }) {
   );
 
   const tax = subtotal * 0.08;
-  const total = subtotal + tax;
+
+  const shipping = subtotal >= 70 ? 0 : 7.99;
+
+  const total = subtotal + tax + shipping;
 
   return (
     <motion.div
@@ -118,6 +121,13 @@ export default function ShoppingCart({ onClose, onCheckout }) {
             Order Summary
           </h2>
 
+          {subtotal < 70 && (
+            <p className="text-sm text-teal-700 mb-4 font-medium">
+              Spend ${(70 - subtotal).toFixed(2)} more to get{" "}
+              <span className="font-bold">FREE Shipping</span>!
+            </p>
+          )}
+
           <div className="flex justify-between text-gray-700 mb-3">
             <p>Subtotal</p>
             <p>${subtotal.toFixed(2)}</p>
@@ -130,7 +140,13 @@ export default function ShoppingCart({ onClose, onCheckout }) {
 
           <div className="flex justify-between text-gray-700 mb-6">
             <p>Shipping</p>
-            <p>—</p>
+            <p className="font-medium">
+              {shipping === 0 ? (
+                <span className="text-green-600 font-semibold">FREE</span>
+              ) : (
+                `$${shipping.toFixed(2)}`
+              )}
+            </p>
           </div>
 
           <div className="flex justify-between text-gray-900 text-lg font-bold mb-6">

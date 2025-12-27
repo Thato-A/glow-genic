@@ -17,23 +17,12 @@ const toDateKey = (date) => date.toISOString().split("T")[0];
 export default function SkinDiary({ onLogin }) {
   const { ref, controls } = useScrollReveal();
 
-  const { user } = useAuth();
+  const { user, authFetch } = useAuth();
   const [entries, setEntries] = useState([]);
   const [note, setNote] = useState("");
   const [mood, setMood] = useState(moodOptions[1].value);
   const [currentMonth, setCurrentMonth] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState(() => new Date());
-
-  // Load entries from localStorage on mount
-  useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("skin-diary-v1"));
-    if (saved) setEntries(saved);
-  }, []);
-
-  // Save whenever entries change
-  useEffect(() => {
-    localStorage.setItem("skin-diary-v1", JSON.stringify(entries));
-  }, [entries]);
 
   const selectedDateKey = useMemo(
     () => toDateKey(selectedDate),
@@ -53,15 +42,32 @@ export default function SkinDiary({ onLogin }) {
     return map;
   }, [entries]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!note.trim()) return;
 
+    const res = await authFetch("/api/diary", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        date: selectedDate.toISOString(),
+        skinConcern: mood,
+        notes: note.trim(),
+      }),
+    });
+
+    const saved = await res.json();
+
+    if (!res.ok) {
+      console.error(saved?.message || "Failed to save entry");
+      return;
+    }
+
     const newEntry = {
-      id: Date.now(),
-      text: note.trim(),
-      dateKey: selectedDateKey,
-      mood,
-      createdAt: new Date().toISOString(),
+      id: saved._id,
+      text: saved.notes || note.trim(),
+      dateKey: toDateKey(new Date(saved.date)),
+      mood: saved.skinConcern || mood,
+      createdAt: saved.createdAt || new Date().toISOString(),
     };
 
     setEntries((prev) => [newEntry, ...prev]);
@@ -103,6 +109,35 @@ export default function SkinDiary({ onLogin }) {
     d.setDate(day);
     setSelectedDate(d);
   };
+
+  useEffect(() => {
+    const loadEntries = async () => {
+      if (!user) {
+        setEntries([]); // not logged in -> show nothing
+        return;
+      }
+
+      const res = await authFetch("/api/diary");
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error(data?.message || "Failed to load diary");
+        return;
+      }
+
+      const mapped = data.map((e) => ({
+        id: e._id,
+        text: e.notes || "",
+        mood: e.skinConcern || moodOptions[1].value,
+        createdAt: e.createdAt || e.date,
+        dateKey: toDateKey(new Date(e.date)),
+      }));
+
+      setEntries(mapped);
+    };
+
+    loadEntries();
+  }, [user, authFetch]);
 
   if (!user) {
     return (

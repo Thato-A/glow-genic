@@ -15,10 +15,14 @@ export default function Register({ onClose }) {
     email.includes("@") &&
     password.trim() !== "";
 
-  const submit = () => {
+  const submit = async () => {
     if (!isValid) return;
-    register(name, email, password);
-    onClose();
+    try {
+      await register(name, email, password);
+      onClose();
+    } catch (err) {
+      console.log(err.message);
+    }
   };
 
   return (

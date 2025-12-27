@@ -10,10 +10,14 @@ export default function Login({ onClose }) {
   const isValid =
     email.trim() !== "" && password.trim() !== "" && email.includes("@");
 
-  const submit = () => {
+  const submit = async () => {
     if (!isValid) return;
-    login(email, password);
-    onClose();
+    try {
+      await login(email, password);
+      onClose();
+    } catch (err) {
+      console.log(err.message);
+    }
   };
 
   return (

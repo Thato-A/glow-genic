@@ -11,7 +11,8 @@ export default function CheckoutPage({ onClose }) {
     0
   );
   const tax = subtotal * 0.08;
-  const total = subtotal + tax;
+  const shipping = subtotal >= 70 ? 0 : 7.99;
+  const total = subtotal + tax + shipping;
 
   const [loading, setLoading] = useState(false);
 
@@ -43,7 +44,7 @@ export default function CheckoutPage({ onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-white z-[9999] overflow-y-auto pt-24 px-6">
+    <div className="fixed inset-0 bg-white z-[9999] overflow-y-auto pt-24 px-6 pb-20">
       {/* Close button */}
       <button
         onClick={onClose}
@@ -133,6 +134,13 @@ export default function CheckoutPage({ onClose }) {
             Order Summary
           </h2>
 
+          {subtotal < 70 && (
+            <p className="text-sm text-teal-700 mb-4 font-medium">
+              Spend ${(70 - subtotal).toFixed(2)} more to get{" "}
+              <span className="font-bold">FREE Shipping</span>!
+            </p>
+          )}
+
           {cart.map((item) => (
             <div
               key={item.id}
@@ -157,6 +165,17 @@ export default function CheckoutPage({ onClose }) {
             <p>${tax.toFixed(2)}</p>
           </div>
 
+          <div className="flex justify-between text-gray-700 mb-6">
+            <p>Shipping</p>
+            <p className="font-medium">
+              {shipping === 0 ? (
+                <span className="text-green-600 font-semibold">FREE</span>
+              ) : (
+                `$${shipping.toFixed(2)}`
+              )}
+            </p>
+          </div>
+
           <div className="flex justify-between text-gray-900 font-bold text-lg mb-6">
             <p>Total</p>
             <p>${total.toFixed(2)}</p>
@@ -169,19 +188,19 @@ export default function CheckoutPage({ onClose }) {
 
           {/* APPLE PAY */}
           <button className="w-full py-3 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition flex items-center justify-center gap-2">
-            <img src="/public/applepay.png" className="h-6" />
+            <img src="/applepay-dark.png" className="h-6" />
             Apple Pay
           </button>
 
           {/* GOOGLE PAY */}
           <button className="w-full py-3 bg-white border rounded-lg font-medium hover:bg-gray-100 transition flex items-center justify-center gap-2">
-            <img src="/public/googlepay.png" className="h-6" />
+            <img src="/googlepay.png" className="h-6" />
             Google Pay
           </button>
 
           {/* VENMO */}
           <button className="w-full py-3 bg-[#3D95CE] text-white rounded-lg font-medium hover:bg-[#2f78a7] transition flex items-center justify-center gap-2">
-            <img src="/public/venmo.png" className="h-6" />
+            <img src="/venmo-blue.png" className="h-6" />
             Pay with Venmo
           </button>
 
