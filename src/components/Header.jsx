@@ -1,10 +1,3 @@
-import { useAuth } from "../context/AuthContext";
-import { useState } from "react";
-import Login from "./Login";
-import Register from "./Registration";
-import { FiShoppingCart } from "react-icons/fi";
-import { useCart } from "../context/CartContext";
-
 import { useState } from "react";
 import { FiShoppingCart, FiMenu, FiX } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
