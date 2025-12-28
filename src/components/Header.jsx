@@ -3,7 +3,7 @@ import { FiShoppingCart, FiMenu, FiX } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import Login from "./Login";
-import Register from "./Register";
+import Register from "./Registration";
 
 export default function Header({ onOpenCart }) {
   const { user, logout } = useAuth();
