@@ -170,12 +170,12 @@ export default function ShoppingCart({ onClose, onCheckout }) {
           </p>
 
           <div className="flex justify-center gap-3">
-            <img src="/public/visa.png" className="h-6" />
-            <img src="/public/mastercard.png" className="h-6" />
-            <img src="/public/amex.png" className="h-6" />
-            <img src="/public/applepay.png" className="h-6" />
-            <img src="/public/googlepay.png" className="h-6" />
-            <img src="/public/venmo-icon.png" className="h-6" />
+            <img src="/visa.png" className="h-6" />
+            <img src="/mastercard.png" className="h-6" />
+            <img src="/amex.png" className="h-6" />
+            <img src="/applepay.png" className="h-6" />
+            <img src="/googlepay.png" className="h-6" />
+            <img src="/venmo-icon.png" className="h-6" />
           </div>
 
           <p className="text-[11px] text-gray-400 text-center mt-3">
